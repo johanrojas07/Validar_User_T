@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { Observable } from 'rxjs/Observable';
 
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFirestore } from 'angularfire2/firestore';
 
 @Component({
   selector: 'app-root',
@@ -9,71 +9,31 @@ import { Observable } from 'rxjs/Observable';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  userdata = {
+    email: '',
+    displayName: ''
+  }
+  status = '';
+  constructor(private afauth: AngularFireAuth, private afs: AngularFirestore) {
 
-  my_notes: Observable<any[]>;
+  }
 
-  constructor(public afDB: AngularFireDatabase) {
-    this.getNotes().valueChanges().subscribe(notas => {
-      this.my_notes = notas;
-
-    });
-  }
-  getNotes(){
-    return this.afDB.list('/notas');
-  }
-  removeNotes(){
-    this.afDB.database.ref('notas/' + this.note.id).remove();
-    this.showform = false;
-    this.note = {id: null, title: null, description: null};
-  }
-  note = {id: null, title: null, description: null};
-  showform = false;
-  editing = false;
-  
-  addNote() {
-    this.editing = true;
-    this.showform = true;
-    this.note = {id: null, title: null, description: null};
-  }
-  cancel() {
-    this.showform = false;
-  }
-  createNote(){
-    if(this.editing){     
-    this.afDB.database.ref('notas/' + this.note.id).set(this.note);
+  emailcheck($event) {
+    let q = $event.target.value;
+    if (q.trim() === '') {
+      this.status= 'email is required';
     }else{
-    this.note.id = Date.now();
-    this.afDB.database.ref('notas/' + this.note.id).set(this.note);
-    }
-    this.showform = false;
-    this.note = {id: null, title: null, description: null};
-     /*if(this.editing){
-      var me = this;
-      this.my_notes.forEach((el, i) => {
-        if(el.id == me.note.id){
-          me.my_notes[i] = me.note;
+      this.status = 'cheking...!';
+      const collref = this.afs.collection('users').ref; 
+      const queryref = collref.where('email', '==', q);
+      queryref.get().then((snapShot) => {
+        if(snapShot.empty) {
+          this.status = 'valid';
+        }else{
+          this.status = 'Email already register in the system,please login';
         }
-      });
-      this.showform = false;
-    }else{    
-    this.my_notes.push(this.note);
-    this.showform = false;
-    this.note = {id: null, title: null, description: null};
-    }*/
+      })
+    }
   }
-  viewNote(note) {
-    this.editing = true;
-    this.note = note; 
-    this.showform = true;
-  }
-  delete(){
-    /*var me = this;
-    this.my_notes.forEach((el, i) => {
-      if(el == me.note){
-        me.my_notes.splice(i, 1);
-      }
-    });
-    this.showform = false;
-    this.note = {id: null, title: null, description: null};*/
-  }
+  
 }

@@ -5,15 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 
 import { AngularFireModule } from 'angularfire2';
-import { AngularFireDatabaseModule} from 'angularfire2/database';
-import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFirestoreModule} from 'angularfire2/firestore';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyDHCWVAJs3WTJyaNvVyjqf-Hqf7ZzoQ_4w",
-  authDomain: "ng-notas-1c434.firebaseapp.com",
-  databaseURL: "https://ng-notas-1c434.firebaseio.com",
-  storageBucket: "ng-notas-1c434.appspot.com",
-  messagingSenderId: '987013240486'
+    apiKey: "AIzaSyCo4r9YF0191ZH_y-0T15YPx5qpng5E1bA",
+    authDomain: "fir-d24cc.firebaseapp.com",
+    databaseURL: "https://fir-d24cc.firebaseio.com",
+    projectId: "fir-d24cc",
+    storageBucket: "fir-d24cc.appspot.com",
+    messagingSenderId: "113868612478"
 };
 
 @NgModule({
@@ -24,11 +25,11 @@ export const firebaseConfig = {
     BrowserModule,
     FormsModule,
     AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireDatabaseModule,
-    AngularFireAuthModule
-
+    AngularFirestoreModule.enablePersistence()
   ],
-  providers: [],
+  providers: [
+    AngularFireAuth
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
